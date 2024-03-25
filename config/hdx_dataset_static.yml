@@ -1,5 +1,5 @@
 license_id: "cc-by-igo"
-methodology: "Registry"
-dataset_source: "Anomaly Hotspots of Agricultural Production"
+methodology: "https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf"
+dataset_source: "Joint Research Centre of the European Commission"
 package_creator: "isabelle-tot"
 private: False

@@ -7,17 +7,28 @@ Reads ASAP - Anomaly Hotspots of Agricultural Production .csv and creates datase
 
 """
 import logging
-import sys
 from datetime import datetime, timezone
 import zipfile
-import os
 import pandas as pd
-import csv
 from hdx.data.dataset import Dataset
-from hdx.utilities.dateparse import parse_date
 from slugify import slugify
+from hdx.location.country import Country
+import os
 
 logger = logging.getLogger(__name__)
+
+
+def update_state(state_dict, state, errors):
+    for error in errors.errors:
+        if error[:16] != "Could not upload":
+            continue
+        dataset_name = error[17:]
+        old_state = state.get().get(dataset_name)
+        if old_state:
+            state_dict[dataset_name] = old_state
+        else:
+            state_dict[dataset_name] = state.get()["DEFAULT"]
+    return state_dict
 
 
 class AsapHotspots:
@@ -25,67 +36,64 @@ class AsapHotspots:
         self.configuration = configuration
         self.retriever = retriever
         self.folder = folder
+        self.manual_url = None
         self.dataset_data = {}
         self.errors = errors
+        self.created_date = None
 
-    def get_data(self):
+    def get_data(self, state):
         base_url = self.configuration["base_url"]
-        filename = self.configuration["filename"]
-        dataset_name = self.configuration["dataset_names"]["ASAP-HOTSPOTS-TEST"]
+        hotspots_filename = self.configuration["hotspots_filename"]
+        dataset_name = self.configuration["dataset_names"]["ASAP-HOTSPOTS-MONTHLY"]
+        self.manual_url = self.configuration["manual_link"]
 
-        data_url = f"{base_url}{filename}.zip"
+        data_url = f"{base_url}{hotspots_filename}.zip"
         downloaded_zipfile = self.retriever.download_file(data_url)
 
         with zipfile.ZipFile(downloaded_zipfile, 'r') as hotspots_data_file:
-            hotspots_data_file.extract(member=f"{filename}.csv",
-                                       path=os.path.dirname(downloaded_zipfile))
+            hotspots_data_file.extractall(path=os.path.dirname(downloaded_zipfile))
 
-        hotspots_file = f"{os.path.dirname(downloaded_zipfile)}{os.sep}{filename}.csv"
-        hotspots_df = pd.read_csv(hotspots_file, sep=";", escapechar='\\').replace('[“”]', '', regex=True)
+        hotspots_file = f"{os.path.dirname(downloaded_zipfile)}{os.sep}{hotspots_filename}.csv"
 
-        self.dataset_data[dataset_name] = hotspots_df.apply(lambda x: x.to_dict(), axis=1)
+        # Checking if the downloaded file created date is more recent than the most current dataset
+        self.created_date = datetime.fromtimestamp((os.path.getctime(hotspots_file)), tz=timezone.utc)
+        if self.created_date > state.get(dataset_name, state["DEFAULT"]):
+            hotspots_df = pd.read_csv(hotspots_file, sep=";", escapechar='\\').replace('[“”]', '', regex=True)
+            hotspots_df["ISO3"] = [Country.get_iso3_country_code(country) for country in hotspots_df["asap0_name"]]
 
-        return [{"name": dataset_name}]
+            self.dataset_data[dataset_name] = hotspots_df.apply(lambda x: x.to_dict(), axis=1)
+
+            return [{"name": dataset_name}]
+        else:
+            return None
 
     def generate_dataset(self, dataset_name):
-        rows = self.dataset_data[dataset_name]
 
-        name = self.configuration["dataset_names"]["ASAP-HOTSPOTS-TEST"]
-        title = "ASAP - Anomaly Hotspots of Agricultural Production: ASAP-HOTSPOTS-TEST"
+        # Setting metadata and configurations
+        name = self.configuration["dataset_names"]["ASAP-HOTSPOTS-MONTHLY"]
+        title = self.configuration["title"]
+        update_frequency = self.configuration["update_frequency"]
         dataset = Dataset({"name": slugify(name), "title": title})
-        dataset.set_maintainer("2f9fd160-2a16-49c0-89d6-0bc3230599bf")
-        dataset.set_organization("13b92c81-4df3-4ed6-a743-ec1a4e4889e8")
-        update_frequency = "monthly"
+        rows = self.dataset_data[dataset_name]
+        dataset.set_maintainer(self.configuration["maintainer_id"])
+        dataset.set_organization(self.configuration["organization_id"])
         dataset.set_expected_update_frequency(update_frequency)
         dataset.set_subnational(False)
         dataset.add_other_location("world")
-        dataset["notes"] = "Monthly identification of agricultural production hotspot countries and summary narratives for agriculture and food security analysts. The historical hotspot time series is available in .csv format. To visualize the information in a GIS environment, use the field asap0_id and join with the spatial layer gaul0_asap (see section Administrative Boundaries). The latest ASAP hotspot layer can also be downloaded as shapefile directly from the ASAP homepage and is available as WFS/WMS"
+        dataset["notes"] = self.configuration["notes"]
         filename = f"{dataset_name.lower()}.csv"
-        resourcedata = {
-            "name": filename,
-            "description": "",
-        }
-
-        '''
-        if metadata["Tags"]:
-            for tag in metadata["Tags"]:
-                tags.add(tag["Tag"].lower())
-        if metadata["Themes"]:
-            for theme in metadata["Themes"]:
-                tags.add(theme["Theme"].lower())
-        '''
+        resource_data = {"name": filename,
+                         "description": self.configuration["description"]}
         tags = sorted([t for t in self.configuration["allowed_tags"]])
         dataset.add_tags(tags)
 
-        start_date = "2023-01-01"#metadata["Start Range"]
-        end_date = "2024-01-01"#metadata["End Range"]
-        ongoing = True
-        if end_date:
-            ongoing = False
+        # Setting time period
+        start_date = self.configuration["start_date"]
+        ongoing = False
         if not start_date:
             logger.error(f"Start date missing for {dataset_name}")
             return None, None
-        dataset.set_time_period(start_date, end_date, ongoing)
+        dataset.set_time_period(start_date, self.created_date, ongoing)
 
         headers = rows[0].keys()
         date_headers = [h for h in headers if "date" in h.lower() and type(rows[0][h]) == int]
@@ -100,11 +108,12 @@ class AsapHotspots:
                 row_date = row_date.strftime("%Y-%m-%d")
                 row[date_header] = row_date
 
+        rows
         dataset.generate_resource_from_rows(
             self.folder,
             filename,
             rows,
-            resourcedata,
+            resource_data,
             list(rows[0].keys()),
             encoding='utf-8'
         )

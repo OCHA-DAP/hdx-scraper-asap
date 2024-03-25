@@ -1,0 +1,24 @@
+# Collector specific configuration
+base_url: "https://agricultural-production-hotspots.ec.europa.eu/files/"
+
+dataset_names:
+  ASAP-HOTSPOTS-MONTHLY: "asap-hotspots-monthly"
+
+allowed_tags:
+  - "drought"
+  - "climate hazards"
+  - "food security"
+
+
+# Metadata
+start_date: "2016-10-01"
+hotspots_filename: "hotspots_ts"
+manual_link: "https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf"
+title: "Anomaly Hotspots of Agricultural Production"
+update_frequency: "monthly"
+maintainer_id: "2f9fd160-2a16-49c0-89d6-0bc3230599bf"
+organization_id: "13b92c81-4df3-4ed6-a743-ec1a4e4889e8"
+description: "Historical data set with the time series of all ASAP hotspot assessments since October 2016 (to date)."
+notes: "[ASAP](https://agricultural-production-hotspots.ec.europa.eu/index.php) is an online decision support system for early warning about hotspots of agricultural production anomaly (crop and rangeland), developed by the JRC for food security crises prevention and response planning. \n\n The monthly hotspots data set is available below, but you can explore the hotspots on the [ASAP Warning Explorer](https://agricultural-production-hotspots.ec.europa.eu/wexplorer/) and access more contextual data on the [downloads page](https://agricultural-production-hotspots.ec.europa.eu/download.php). To learn more about the hotspots, refer to the [warning classification methodology document](https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf)."
+
+
