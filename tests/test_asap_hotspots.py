@@ -77,15 +77,15 @@ class TestAsapHotspots:
                 retriever = Retrieve(downloader, folder, fixtures, folder, False, True)
                 asaphotspots = AsapHotspots(configuration, retriever, folder, ErrorsOnExit())
                 dataset_names = asaphotspots.get_data(
-                    {"DEFAULT": parse_date("2023-01-01")}
+                    state={"ASAP-HOTSPOTS-MONTHLY": parse_date("2023-01-01"),
+                           "DEFAULT": parse_date("2023-01-01")}
                 )
-                assert dataset_names == [{"name": "ASAP-HOTSPOTS-MONTHLY"}]
+                assert dataset_names == [{"name": "asap-hotspots-monthly"}]
 
-                dataset, showcase = asaphotspots.generate_dataset("ASAP-HOTSPOTS-MONTHLY")
+                dataset = asaphotspots.generate_dataset("asap-hotspots-monthly")
                 assert dataset == self.dataset
                 resources = dataset.get_resources()
                 assert resources[0] == self.resource
                 file = "asap_hotspots_monthly_test.csv"
                 assert_files_same(join("tests", "fixtures", file), join(folder, file))
-                assert showcase == self.showcase
 
