@@ -77,8 +77,7 @@ class TestAsapHotspots:
                 retriever = Retrieve(downloader, folder, fixtures, folder, False, True)
                 asaphotspots = AsapHotspots(configuration, retriever, folder, ErrorsOnExit())
                 dataset_names = asaphotspots.get_data(
-                    {"DEFAULT": parse_date("2023-01-01")},
-                    datasets="ASAP-HOTSPOTS-MONTHLY",
+                    {"DEFAULT": parse_date("2023-01-01")}
                 )
                 assert dataset_names == [{"name": "ASAP-HOTSPOTS-MONTHLY"}]
 
