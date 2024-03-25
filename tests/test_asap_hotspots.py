@@ -33,7 +33,7 @@ class TestAsapHotspots:
             {'name': 'climate hazards', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
             {'name': 'drought', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
             {'name': 'food security', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
-        "dataset_date": "[2016-10-01T00:00:00 TO 2024-02-02T23:59:59]",
+        "dataset_date": "[2016-10-01T00:00:00 TO 2024-03-25T23:59:59]",
 
     }
     resource = {
