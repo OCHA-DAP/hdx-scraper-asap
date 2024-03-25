@@ -22,7 +22,7 @@ from asap import AsapHotspots
 class TestAsapHotspots:
     dataset = {
         "data_update_frequency": "30",
-        "dataset_date": "[2023-01-01T00:00:00 TO 2024-01-01T23:59:59]",
+        "dataset_date": "[2016-10-01T00:00:00 TO 2024-03-25T23:59:59]",
         "groups": [{"name": "world"}],
         "maintainer": "2f9fd160-2a16-49c0-89d6-0bc3230599bf",
         "name": "asap-hotspots-monthly",
@@ -77,8 +77,8 @@ class TestAsapHotspots:
                 retriever = Retrieve(downloader, folder, fixtures, folder, False, True)
                 asaphotspots = AsapHotspots(configuration, retriever, folder, ErrorsOnExit())
                 dataset_names = asaphotspots.get_data(
-                    state={"ASAP-HOTSPOTS-MONTHLY": parse_date("2023-01-01"),
-                           "DEFAULT": parse_date("2023-01-01")}
+                    state={"ASAP-HOTSPOTS-MONTHLY": parse_date("2016-10-01"),
+                           "DEFAULT": parse_date("2016-10-01")}
                 )
                 assert dataset_names == [{"name": "asap-hotspots-monthly"}]
 
