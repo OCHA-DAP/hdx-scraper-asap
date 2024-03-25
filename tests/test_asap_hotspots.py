@@ -21,24 +21,25 @@ from asap import AsapHotspots
 
 class TestAsapHotspots:
     dataset = {
-        "data_update_frequency": "30",
-        "dataset_date": "[2016-10-01T00:00:00 TO 2024-03-25T23:59:59]",
-        "groups": [{"name": "world"}],
-        "maintainer": "2f9fd160-2a16-49c0-89d6-0bc3230599bf",
         "name": "asap-hotspots-monthly",
-        "notes": f"[ASAP](https://agricultural-production-hotspots.ec.europa.eu/index.php) is an online decision support system for early warning about hotspots of agricultural production anomaly (crop and rangeland), developed by the JRC for food security crises prevention and response planning. \n\n The monthly hotspots data set is available below, but you can explore the hotspots on the [ASAP Warning Explorer](https://agricultural-production-hotspots.ec.europa.eu/wexplorer/) and access more contextual data on the [downloads page](https://agricultural-production-hotspots.ec.europa.eu/download.php). To learn more about the hotspots, refer to the [warning classification methodology document](https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf).",
-        "owner_org": "13b92c81-4df3-4ed6-a743-ec1a4e4889e8",
-        "subnational": "0",
-        "tags": [
-            {'name': 'drought', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
-            {'name': 'food security', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
-            {'name': 'climate hazards', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
         "title": "Anomaly Hotspots of Agricultural Production",
+        "maintainer": "2f9fd160-2a16-49c0-89d6-0bc3230599bf",
+        "owner_org": "13b92c81-4df3-4ed6-a743-ec1a4e4889e8",
+        "data_update_frequency": "30",
+        "subnational": "0",
+        "groups": [{"name": "world"}],
+        "notes": f"[ASAP](https://agricultural-production-hotspots.ec.europa.eu/index.php) is an online decision support system for early warning about hotspots of agricultural production anomaly (crop and rangeland), developed by the JRC for food security crises prevention and response planning. \n\n The monthly hotspots data set is available below, but you can explore the hotspots on the [ASAP Warning Explorer](https://agricultural-production-hotspots.ec.europa.eu/wexplorer/) and access more contextual data on the [downloads page](https://agricultural-production-hotspots.ec.europa.eu/download.php). To learn more about the hotspots, refer to the [warning classification methodology document](https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf).",
+        "tags": [
+            {'name': 'climate hazards', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+            {'name': 'drought', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+            {'name': 'food security', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
+        "dataset_date": "[2016-10-01T00:00:00 TO 2024-02-02T23:59:59]",
+
     }
     resource = {
-        "description": "",
+        "description": "Historical data set with the time series of all ASAP hotspot assessments since October 2016 (to date).",
         "format": "csv",
-        "name": "asap_hotspots_monthly_test.csv",
+        "name": "asap-hotspots-monthly.csv",
         "resource_type": "file.upload",
         "url_type": "upload",
     }
@@ -56,10 +57,9 @@ class TestAsapHotspots:
         )
         UserAgent.set_global("test")
         tags = (
-            "drought",
             "climate hazards",
-            "food security"
-        )
+            "drought",
+            "food security")
         Vocabulary._tags_dict = {tag: {"Action to Take": "ok"} for tag in tags}
         tags = [{"name": tag} for tag in tags]
         Vocabulary._approved_vocabulary = {
@@ -86,6 +86,6 @@ class TestAsapHotspots:
                 assert dataset == self.dataset
                 resources = dataset.get_resources()
                 assert resources[0] == self.resource
-                file = "asap_hotspots_monthly_test.csv"
+                file = "asap-hotspots-monthly.csv"
                 assert_files_same(join("tests", "fixtures", file), join(folder, file))
 

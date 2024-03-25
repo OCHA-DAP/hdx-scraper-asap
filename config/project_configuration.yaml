@@ -5,8 +5,8 @@ dataset_names:
   ASAP-HOTSPOTS-MONTHLY: "asap-hotspots-monthly"
 
 allowed_tags:
-  - "drought"
   - "climate hazards"
+  - "drought"
   - "food security"
 
 # Metadata
