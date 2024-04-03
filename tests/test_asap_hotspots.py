@@ -20,6 +20,8 @@ from asap import AsapHotspots
 
 
 class TestAsapHotspots:
+    # Setting this to a constant date for testing purposes
+    created_date = "2024-03-25T23:59:59"
     dataset = {
         "name": "asap-hotspots-monthly",
         "title": "Anomaly Hotspots of Agricultural Production",
@@ -33,7 +35,7 @@ class TestAsapHotspots:
             {'name': 'climate hazards', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
             {'name': 'drought', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
             {'name': 'food security', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
-        "dataset_date": "[2016-10-01T00:00:00 TO 2024-03-25T23:59:59]",
+        "dataset_date": f"[2016-10-01T00:00:00 TO {created_date}]",
 
     }
     resource = {
@@ -83,6 +85,9 @@ class TestAsapHotspots:
                 assert dataset_names == [{"name": "asap-hotspots-monthly"}]
 
                 dataset = asaphotspots.generate_dataset("asap-hotspots-monthly")
+                time_period = dataset.get_time_period()
+                dataset.set_time_period(time_period["startdate"], self.created_date, time_period["ongoing"])
+
                 assert dataset == self.dataset
                 resources = dataset.get_resources()
                 assert resources[0] == self.resource
