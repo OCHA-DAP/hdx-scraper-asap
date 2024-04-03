@@ -16,7 +16,7 @@ from hdx.utilities.retriever import Retrieve
 from hdx.utilities.state import State
 from hdx.data.hdxobject import HDXError
 
-from asap import AsapHotspots, update_state
+from asap import AsapHotspots
 
 logger = logging.getLogger(__name__)
 
