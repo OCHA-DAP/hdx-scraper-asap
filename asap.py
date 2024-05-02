@@ -18,6 +18,30 @@ import os
 logger = logging.getLogger(__name__)
 
 
+def correct_country_names(countries):
+    """
+    Some countries don't match the HDX library so they need to be fixed before publishing.
+
+    :param countries:
+    :return: countries list with corrected names
+    """
+
+    corrected_countries = []
+    countries_mapping = {"Laos": "Lao People's Democratic Republic",
+                         "North Korea": "Democratic People's Republic of Korea",
+                         "Central Africa": "Central African Republic",
+                         "DR Congo": "Democratic Republic of the Congo",
+                         "Equat. Guinea": "Equatorial Guinea"}
+
+    for country in countries:
+        if country in countries_mapping.keys():
+            corrected_countries.append(countries_mapping[country])
+        else:
+            corrected_countries.append(country)
+
+    return corrected_countries
+
+
 class AsapHotspots:
     def __init__(self, configuration, retriever, folder, errors):
         self.configuration = configuration
@@ -46,8 +70,9 @@ class AsapHotspots:
         self.created_date = datetime.fromtimestamp((os.path.getctime(hotspots_file)), tz=timezone.utc)
         if self.created_date > state.get(dataset_name, state["DEFAULT"]):
             hotspots_df = pd.read_csv(hotspots_file, sep=";", escapechar='\\').replace('[“”]', '', regex=True)
-            hotspots_df["ISO3"] = [Country.get_iso3_country_code(country) for country in hotspots_df["asap0_name"]]
 
+            hotspots_df["asap0_name"] = correct_country_names(hotspots_df["asap0_name"])
+            hotspots_df["ISO3"] = [Country.get_iso3_country_code(country) for country in hotspots_df["asap0_name"]]
             self.dataset_data[dataset_name] = hotspots_df.apply(lambda x: x.to_dict(), axis=1)
 
             return [{"name": dataset_name}]
