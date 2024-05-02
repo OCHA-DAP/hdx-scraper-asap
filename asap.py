@@ -18,28 +18,27 @@ import os
 logger = logging.getLogger(__name__)
 
 
-def correct_country_names(countries):
+def correct_country_names(asap_countries, iso3_countries):
     """
     Some countries don't match the HDX library so they need to be fixed before publishing.
 
-    :param countries:
-    :return: countries list with corrected names
+    :return: dataframe with corrected values
     """
 
-    corrected_countries = []
+    corrected_iso3 = []
     countries_mapping = {"Laos": "Lao People's Democratic Republic",
                          "North Korea": "Democratic People's Republic of Korea",
                          "Central Africa": "Central African Republic",
                          "DR Congo": "Democratic Republic of the Congo",
                          "Equat. Guinea": "Equatorial Guinea"}
 
-    for country in countries:
-        if country in countries_mapping.keys():
-            corrected_countries.append(countries_mapping[country])
+    for asap_country_name, iso3_country_name in zip(asap_countries, iso3_countries):
+        if asap_country_name in countries_mapping.keys():
+            corrected_iso3.append(countries_mapping[asap_country_name])
         else:
-            corrected_countries.append(country)
+            corrected_iso3.append(iso3_country_name)
 
-    return corrected_countries
+    return corrected_iso3
 
 
 class AsapHotspots:
@@ -71,8 +70,8 @@ class AsapHotspots:
         if self.created_date > state.get(dataset_name, state["DEFAULT"]):
             hotspots_df = pd.read_csv(hotspots_file, sep=";", escapechar='\\').replace('[“”]', '', regex=True)
 
-            hotspots_df["asap0_name"] = correct_country_names(hotspots_df["asap0_name"])
             hotspots_df["ISO3"] = [Country.get_iso3_country_code(country) for country in hotspots_df["asap0_name"]]
+            hotspots_df["ISO3"] = correct_country_names(hotspots_df["asap0_name"], hotspots_df["ISO3"])
             self.dataset_data[dataset_name] = hotspots_df.apply(lambda x: x.to_dict(), axis=1)
 
             return [{"name": dataset_name}]
