@@ -34,7 +34,7 @@ def correct_country_names(asap_countries, iso3_countries):
 
     for asap_country_name, iso3_country_name in zip(asap_countries, iso3_countries):
         if asap_country_name in countries_mapping.keys():
-            corrected_iso3.append(countries_mapping[asap_country_name])
+            corrected_iso3.append(Country.get_iso3_country_code(countries_mapping[asap_country_name]))
         else:
             corrected_iso3.append(iso3_country_name)
 
