@@ -95,8 +95,7 @@ class AsapHotspots:
         dataset.set_organization(self.configuration["organization_id"])
         dataset.set_expected_update_frequency(update_frequency)
         dataset.set_subnational(False)
-        # dataset.add_country_locations(self.country_list)
-        dataset.add_other_location("world")
+        dataset.add_country_locations(self.country_list)
         dataset["notes"] = self.configuration["notes"]
         filename = f"{dataset_name.lower()}.csv"
         resource_data = {"name": filename,

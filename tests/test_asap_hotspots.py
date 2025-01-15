@@ -21,7 +21,7 @@ from asap import AsapHotspots
 
 class TestAsapHotspots:
     # Setting this to a constant date for testing purposes
-    created_date = "2024-03-25T23:59:59"
+    created_date = "2024-11-11T23:59:59"
     dataset = {
         "name": "asap-hotspots-monthly",
         "title": "Anomaly Hotspots of Agricultural Production",
@@ -29,7 +29,16 @@ class TestAsapHotspots:
         "owner_org": "13b92c81-4df3-4ed6-a743-ec1a4e4889e8",
         "data_update_frequency": "30",
         "subnational": "0",
-        "groups": [{"name": "world"}],
+        'groups': [{'name': 'bgd'},
+            {'name': 'cub'},
+            {'name': 'dji'},
+            {'name': 'kgz'},
+            {'name': 'lao'},
+            {'name': 'mdg'},
+            {'name': 'moz'},
+            {'name': 'sdn'},
+            {'name': 'tjk'},
+            {'name': 'uzb'}],
         "notes": f"[ASAP](https://agricultural-production-hotspots.ec.europa.eu/index.php) is an online decision support system for early warning about hotspots of agricultural production anomaly (crop and rangeland), developed by the JRC for food security crises prevention and response planning. \n\n The monthly hotspots data set is available below, but you can explore the hotspots on the [ASAP Warning Explorer](https://agricultural-production-hotspots.ec.europa.eu/wexplorer/) and access more contextual data on the [downloads page](https://agricultural-production-hotspots.ec.europa.eu/download.php). To learn more about the hotspots, refer to the [warning classification methodology document](https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf).",
         "tags": [
             {'name': 'climate hazards', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},

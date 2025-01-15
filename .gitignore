@@ -4,3 +4,6 @@
 
 # PyCharm files
 .idea/
+
+__pycache__/
+errors.log
