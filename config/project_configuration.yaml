@@ -11,6 +11,7 @@ allowed_tags:
 
 # Metadata
 start_date: "2016-10-01"
+end_date: "2024-01-11"
 hotspots_filename: "hotspots_ts"
 manual_link: "https://agricultural-production-hotspots.ec.europa.eu/files/asap_warning_classification_v_4_0.pdf"
 title: "Anomaly Hotspots of Agricultural Production"

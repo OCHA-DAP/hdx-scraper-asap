@@ -50,6 +50,7 @@ class AsapHotspots:
         self.dataset_data = {}
         self.errors = errors
         self.created_date = None
+        self.country_list = []
 
     def get_data(self, state):
         base_url = self.configuration["base_url"]
@@ -74,6 +75,10 @@ class AsapHotspots:
             hotspots_df["ISO3"] = correct_country_names(hotspots_df["asap0_name"], hotspots_df["ISO3"])
             self.dataset_data[dataset_name] = hotspots_df.apply(lambda x: x.to_dict(), axis=1)
 
+            # Get unique list of countries included in dataset for metadata Location
+            unique_countries = sorted(hotspots_df["asap0_name"].unique())
+            self.country_list = list(unique_countries)
+
             return [{"name": dataset_name}]
         else:
             return None
@@ -90,6 +95,7 @@ class AsapHotspots:
         dataset.set_organization(self.configuration["organization_id"])
         dataset.set_expected_update_frequency(update_frequency)
         dataset.set_subnational(False)
+        # dataset.add_country_locations(self.country_list)
         dataset.add_other_location("world")
         dataset["notes"] = self.configuration["notes"]
         filename = f"{dataset_name.lower()}.csv"
@@ -100,11 +106,12 @@ class AsapHotspots:
 
         # Setting time period
         start_date = self.configuration["start_date"]
+        end_date = self.configuration["end_date"]
         ongoing = False
         if not start_date:
             logger.error(f"Start date missing for {dataset_name}")
             return None, None
-        dataset.set_time_period(start_date, self.created_date, ongoing)
+        dataset.set_time_period(start_date, end_date, ongoing)
 
         headers = rows[0].keys()
         date_headers = [h for h in headers if "date" in h.lower() and type(rows[0][h]) == int]
