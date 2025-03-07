@@ -110,11 +110,13 @@ class AsapHotspots:
         if not start_date:
             logger.error(f"Start date missing for {dataset_name}")
             return None, None
-        dataset.set_time_period(start_date, end_date, ongoing)
+
 
         headers = rows[0].keys()
         date_headers = [h for h in headers if "date" in h.lower() and type(rows[0][h]) == int]
         for row in rows:
+            if row['date'] > end_date:
+                end_date = row['date']
             for date_header in date_headers:
                 row_date = row[date_header]
                 if not row_date:
@@ -125,6 +127,7 @@ class AsapHotspots:
                 row_date = row_date.strftime("%Y-%m-%d")
                 row[date_header] = row_date
 
+        dataset.set_time_period(start_date, end_date, ongoing)
         rows
         dataset.generate_resource_from_rows(
             self.folder,
