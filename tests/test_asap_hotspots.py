@@ -50,9 +50,7 @@ class TestAsapHotspots:
     resource = {
         "description": "Historical data set with the time series of all ASAP hotspot assessments since October 2016 (to date).",
         "format": "csv",
-        "name": "asap-hotspots-monthly.csv",
-        "resource_type": "file.upload",
-        "url_type": "upload",
+        "name": "asap-hotspots-monthly.csv"
     }
 
     @pytest.fixture(scope="function")
