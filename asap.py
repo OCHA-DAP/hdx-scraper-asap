@@ -129,7 +129,7 @@ class AsapHotspots:
 
         dataset.set_time_period(start_date, end_date, ongoing)
         rows
-        dataset.generate_resource_from_rows(
+        dataset.generate_resource(
             self.folder,
             filename,
             rows,
